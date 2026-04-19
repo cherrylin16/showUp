@@ -13,23 +13,9 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 from pathlib import Path
 import environ
 import os
-from google.cloud.sql.connector import Connector
-import pymysql
+import secrets
 
 env = environ.Env()
-connector = Connector()
-
-
-def getconn():
-    conn = connector.connect(
-        os.environ["INSTANCE_CONNECTION_NAME"],
-        "pymysql",
-        user=os.environ["DB_USER"],
-        password=os.environ["DB_PASSWORD"],
-        db=os.environ["DB_NAME"],
-    )
-    return conn
-
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,7 +27,8 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"), overwrite=False)
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-django_key = os.environ("DJANGO_KEY")
+# mandatory to run django locally without relying on cloud run secrets, use .env file
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -100,16 +87,39 @@ WSGI_APPLICATION = 'showUp_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# uses the Python 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.mysql",
-        "OPTIONS": {
-            "creator": getconn,
-        },
-    }
-}
+# added if condition to use sqlite for local dev, cloud sql mysql for production
+if os.getenv("USE_CLOUD_SQL") == "true":
+    from google.cloud.sql.connector import Connector
+    import pymysql
 
+    connector = Connector()
+
+    def getconn():
+        return connector.connect(
+            os.environ["INSTANCE_CONNECTION_NAME"],
+            "pymysql",
+            user=os.environ["DB_USER"],
+            password=os.environ["DB_PASSWORD"],
+            db=os.environ["DB_NAME"],
+        )
+
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.mysql",
+            "OPTIONS": {
+                "creator": getconn
+            },
+        }
+    }
+
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+
+    }
 
 
 # Password validation
