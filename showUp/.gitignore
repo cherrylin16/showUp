@@ -1,0 +1,21 @@
+Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/s
+
+Python cache
+pycache/
+*.pyc
+
+Django stuff
+*.log
+do not push database
+gcp is hosted elsewhere, no need to disclude
+db.sqlite3
+/media/
+
+.idea
