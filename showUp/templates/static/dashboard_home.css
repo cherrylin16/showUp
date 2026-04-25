@@ -1,0 +1,52 @@
+
+
+.main{
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+/* https://www.w3schools.com/howto/howto_css_searchbar.asp */
+/* Search bar */
+
+.searchbar {
+    justify-content: flex-start;
+}
+
+.searchbar input[type=text] {
+    flex-grow:1;
+    float: right;
+    padding: 7px;
+    border: 1px solid #ccc;
+    border-radius: 6px 6px 6px 6px;
+    font-size: 17px;
+    width: 1000px;
+    margin-right: 4px;
+}
+
+/* Search button */
+.search-button {
+    width: 45px;
+    height: 40px;
+    flex-shrink: 0;
+    justify-content: center;
+    margin-top: 0px;
+    padding-top: 5px;
+    margin-left:10px;
+    margin-right: 25px;
+
+    color: #ffffff;
+    background: #5b84d7;
+    border: none;
+    border-radius: 6px 6px 6px 6px;
+    outline: none;
+    cursor: pointer;
+}
+
+.search-button:hover{
+    background: #2851a4;
+}
+
+.search-container {
+    display: flex;
+}
