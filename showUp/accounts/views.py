@@ -8,6 +8,7 @@ def signup_view(request):
         form = SignUpForm(request.POST, request.FILES)
 
         if form.is_valid():
+            user.preferenceID = 1
             user = form.save()
             login(request, user)
             print("USER CREATED:", user.email)
