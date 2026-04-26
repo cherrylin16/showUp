@@ -24,6 +24,7 @@ class EventPost(models.Model):
     ]
     
     # author = models.ForeignKey(User, on_delete=models.CASCADE, max_length=100)
+    host_name = models.TextField(default="", blank=False)
     event_name = models.TextField(default="", blank=False)
     location = models.TextField(default="",blank=False)
     caterer_address = models.TextField(default="", blank=False)
@@ -42,5 +43,5 @@ class EventPost(models.Model):
     class Meta:
         ordering = ['-created_at']
     
-    def __str__(self):
-        return f"{self.author.username} - {self.text[:50]}"
+    # def __str__(self):
+    #     return f"{self.author.username} - {self.text[:50]}"

@@ -9,8 +9,9 @@ class EventPostForm(forms.ModelForm):
     class Meta:
         model = EventPost
         # 'location_snum', 'location_street', 'location_city' 'location_state', 'location_zip,
-        fields = ['event_name', 'date', 'start_time', 'end_time', 'location', 'caterer_address', 'caterer_phone', 'caterer_name', 'catering_budget', 'supplies_budget', 'event_description', 'image', 'image_visibility']
+        fields = ['host_name','event_name', 'date', 'start_time', 'end_time', 'location', 'caterer_address', 'caterer_phone', 'caterer_name', 'catering_budget', 'supplies_budget', 'event_description', 'image', 'image_visibility']
         widgets = {
+            'host_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Host Name', 'required': True}),
             'event_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Name of Event', 'required': True}),
             'date': forms.DateInput(attrs={'class':'form-control', 'type': 'date', 'required': True}),
             'start_time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),

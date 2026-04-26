@@ -61,7 +61,7 @@ body {
     margin-right: 15px;
 
     color: #ffffff;
-    background: #5b84d7;
+    background: #C0C0C0;
     border: none;
     border-radius: 6px 6px 6px 6px;
     outline: none;
@@ -69,7 +69,7 @@ body {
 }
 
 .search-button:hover{
-    background: #2851a4;
+    background: #818589;
 }
 
 .search-container {
