@@ -81,3 +81,13 @@ body {
     height: 42px;
     min-width: 170px;
 }
+
+.rsvp-button{
+    background: #dc3545;
+    color: white;
+}
+
+.rsvp-button:hover{
+    background: #c70000;
+    color: white;
+}

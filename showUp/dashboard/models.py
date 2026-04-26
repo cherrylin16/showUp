@@ -19,10 +19,6 @@ from django.contrib.auth.models import AbstractUser
 
 
 class EventPost(models.Model):
-    VISIBILITY_CHOICES = [
-        ('all', 'All Users'),
-    ]
-    
     # author = models.ForeignKey(User, on_delete=models.CASCADE, max_length=100)
     host_name = models.TextField(default="", blank=False)
     event_name = models.TextField(default="", blank=False)
@@ -32,12 +28,10 @@ class EventPost(models.Model):
     caterer_name = models.TextField(default="", blank=False)
     catering_budget = models.TextField(default="", blank=False)
     supplies_budget = models.TextField(default="", blank=False)
-    date = models.TextField(default="", blank=False)
+    date = models.DateField(default="", blank=False)
     event_description = models.TextField(default="", blank=True)
     start_time = models.TimeField()
     end_time = models.TimeField()
-    image = models.ImageField(upload_to='carpool_posts/', blank=True, null=True)
-    image_visibility = models.CharField(max_length=10, choices=VISIBILITY_CHOICES, default='all')
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:

@@ -9,7 +9,7 @@ class EventPostForm(forms.ModelForm):
     class Meta:
         model = EventPost
         # 'location_snum', 'location_street', 'location_city' 'location_state', 'location_zip,
-        fields = ['host_name','event_name', 'date', 'start_time', 'end_time', 'location', 'caterer_address', 'caterer_phone', 'caterer_name', 'catering_budget', 'supplies_budget', 'event_description', 'image', 'image_visibility']
+        fields = ['host_name','event_name', 'date', 'start_time', 'end_time', 'location', 'caterer_address', 'caterer_phone', 'caterer_name', 'catering_budget', 'supplies_budget', 'event_description']
         widgets = {
             'host_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Host Name', 'required': True}),
             'event_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Name of Event', 'required': True}),
@@ -25,8 +25,6 @@ class EventPostForm(forms.ModelForm):
             }),
             'caterer_name': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Company Name'}),
             'event_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Create a description for your event'}),
-            'image': forms.FileInput(attrs={'class': 'form-control'}),
-            'image_visibility': forms.Select(attrs={'class': 'form-control'}),
         }
         
     
