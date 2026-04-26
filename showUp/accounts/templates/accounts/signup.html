@@ -84,18 +84,6 @@
                 {% endfor %}
             </div>
 
-
-            <!-- Profile pic -->
-            <div class="mb-3">
-                <label class="form-label">
-                    Profile Picture <span class="text-muted">(optional)</span>
-                </label>
-                {{ form.pfp }}
-                {% for error in form.pfp.errors %}
-                    <div class="text-danger small">{{ error }}</div>
-                {% endfor %}
-            </div>
-
             <!-- Password -->
             <div class="mb-3">
                 <label class="form-label">Password</label>

@@ -96,6 +96,8 @@ WSGI_APPLICATION = 'showUp_project.wsgi.application'
 
 # added if condition to use sqlite for local dev, cloud sql mysql for production
 if os.getenv("USE_CLOUD_SQL") == "true":
+    SESSION_ENGINE = "django.contrib.sessions.backends.signed_cookies"
+    
     print("USING CLOUD SQL")
 
     from google.cloud.sql.connector import Connector
