@@ -28,22 +28,25 @@ class ShowUpUser(AbstractBaseUser, PermissionsMixin):
     lastName = models.CharField(max_length=100, db_column="lastName")
     email = models.EmailField(unique=True, db_column="email")
 
-    phone = models.CharField(max_length=20, blank=True, null=True, db_column="phone")
-    birthdate = models.DateField(blank=True, null=True, db_column="birthdate")
+    phone = models.CharField(max_length=255)  # match DB
+    birthdate = models.DateField()            # NOT NULL in DB
+
+    pfp = models.BinaryField(null=True, blank=True)  # 👈 ADD THIS
+
     accountCreated = models.DateTimeField(auto_now_add=True, db_column="accountCreated")
 
-    pfp = models.ImageField(
-        upload_to="profile_pictures/",
-        blank=True,
-        null=True,
-        db_column="pfp"
-    )
-
-    preferenceID = models.IntegerField(blank=True, null=True, db_column="preferenceID")
-
-    # Required for Django auth/admin
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    preference = models.ForeignKey(
+        "Preference",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_column="preferenceID"
+    )
+
 
     objects = ShowUpUserManager()
 
@@ -52,6 +55,21 @@ class ShowUpUser(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = "ShowUp_Users"
+        managed = False
 
     def __str__(self):
         return self.email
+    
+    
+class Preference(models.Model):
+    preferenceID = models.AutoField(primary_key=True, db_column="preferenceID")
+
+    lightMode = models.CharField(max_length=10, db_column="lightMode")
+    notifications = models.BooleanField(db_column="notifications")
+
+    class Meta:
+        db_table = "ShowUp_Preferences"
+        managed = False
+
+    def __str__(self):
+        return f"{self.lightMode}, notifications={'On' if self.notifications else 'Off'}"
