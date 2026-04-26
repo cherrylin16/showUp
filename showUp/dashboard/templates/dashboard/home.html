@@ -41,12 +41,17 @@
                         </button>
                     </form>
 
-                    <button class="create-event btn btn-primary btn-block" type="button" data-bs-toggle="modal" data-bs-target="#createPostModal">Host a New Event</button>
-                    <!-- <button class="create-event btn btn-primary btn-block" type="button">Create an Event</button> -->
+                    <button type="button" class="btn btn-outline-secondary d-flex align-items-center filters-button me-3" data-bs-toggle="modal" data-bs-target="#filterModal">
+                        <span class="material-symbols-outlined"></span> Filters
+                    </button>
 
+                    <button class="create-event btn btn-primary btn-block" type="button" data-bs-toggle="modal" data-bs-target="#createPostModal">Host a New Event</button>
                 </div>
-            </div>
-        </div>
+
+                <!-- <div class="listings-container mt-3">
+                    <h5>Active Event Listings</h5>
+                </div> -->
+
 
         <div class="modal fade" id="createPostModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
@@ -133,5 +138,42 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm"> <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="filterModalLabel">Filters</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                
+                <form method="get" action="{% url 'dashboard_home' %}">
+                    <div class="modal-body">
+                        <input type="hidden" name="q" value="{{ request.GET.q|default:'' }}">
+
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" class="form-control" value="{{ request.GET.date }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="start_time" class="form-control" value="{{ request.GET.start_time }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">End Time</label>
+                            <input type="time" name="end_time" class="form-control" value="{{ request.GET.end_time }}">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer flex-column">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+                        <a href="{% url 'dashboard_home' %}" class="btn btn-link btn-sm text-secondary">Clear All Filters</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
     </body>
 </html>
