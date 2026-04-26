@@ -75,8 +75,13 @@
         <h3>Show Up.</h3>
     </div>
     <nav class="nav-links">
-        <a href="{% url 'index' %}">Dashboard</a>
+        <a href="{% url 'dashboard_home' %}">Dashboard</a>
         <a href="{% url 'invites:index' %}">Invites</a>
-        <a href="">Profile</a>
+        <a href="{% url 'profile' %}">Profile</a>
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">{% csrf_token %}
+            <button type="submit" class="btn btn-outline-danger">
+                Logout
+            </button>
+        </form>
     </nav>
 </header>

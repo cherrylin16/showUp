@@ -7,3 +7,4 @@ django-environ==0.11.2
 mysqlclient
 cloud-sql-python-connector
 pymysql
+pillow==12.0.0

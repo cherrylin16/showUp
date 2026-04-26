@@ -53,36 +53,47 @@
     <body>    
         {% include "static/navigationbar.html" %}
         <div class="tools">
-            <input id="InvitesSearchTextBox" type="text" class="col-10" placeholder="Search" />
-            <select class="tools-content">
-                <option value="All">All Invites</option>
-                <option value="Yes">Yes</option>
-                <option value="Maybe">Maybe</option>
-                <option value="No">No</option>
-                <option value="No RSVP">Not Response Yet</option>
-            </select>
+            <form method="GET" class="tools-content col-10" style="display: flex;">
+                {% csrf_token %}
+                <input id="InvitesSearchTextBox" type="search" class="col-10" value="{{ search }}" placeholder="Search" />
+                <button type="submit">Search</button>
+            </form>
+            <form method="GET">
+                {% csrf_token %}
+                <select name="filter" id="filter" class="tools-content">
+                    <option value="All">All Invites</option>
+                    <option value="Yes">Yes</option>
+                    <option value="Maybe">Maybe</option>
+                    <option value="No">No</option>
+                    <option value="No RSVP">Not Response Yet</option>
+                </select>
+            </form>
             <button type="button" class="tools-content">Create Event</button>
         </div>
         <h1 style="padding-left: 10px;">Invites</h1>
-        <div class="invites-body col-12">    
-            {% for invite in user_invites %}
-                <div class="invites-card col-3">
-                    <h2>Event Name</h2>
-                    <p>Host: </p>
-                    <p>Date: </p>
-                    <p>Time: </p>
-                    <p>Theme: </p>
-                    <p>Going? </p>
-                    <!-- conditional to show button if not rsvp'd otherwise, show the status -->
-                    <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
-                        {% csrf_token %}
-                        <button type="submit" name="event_id">RSVP</button>
-                    </form>
-                    <!-- <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
-                        {% csrf_token %}
-                        <button type="submit" name="event_id">Update RSVP</button>
-                    </form> -->
-                {% endfor %}
+        <div class="invites-body col-12">  
+            {% if user_invites %}  
+                {% for invite in user_invites %}
+                    <div class="invites-card col-3">
+                        <h2>Event Name</h2>
+                        <p>Host: </p>
+                        <p>Date: </p>
+                        <p>Time: </p>
+                        <p>Theme: </p>
+                        <p>Going? </p>
+                        <!-- conditional to show button if not rsvp'd otherwise, show the status -->
+                        <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
+                            {% csrf_token %}
+                            <button type="submit" name="event_id">RSVP</button>
+                        </form>
+                        <!-- <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
+                            {% csrf_token %}
+                            <button type="submit" name="event_id">Update RSVP</button>
+                        </form> -->
+                    {% endfor %}
+                {% else %}
+                        <h3>No event invites yet</h3>
+                {% endif %}
             </div>
         </div>
     </body>

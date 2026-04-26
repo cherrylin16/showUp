@@ -39,6 +39,11 @@ ALLOWED_HOSTS = [
     ".run.app",
 ]
 
+LOGIN_REDIRECT_URL = "dashboard_home"
+LOGOUT_REDIRECT_URL = "login"
+LOGIN_URL = "login"
+
+AUTH_USER_MODEL = "accounts.ShowUpUser"
 
 # Application definition
 
@@ -53,6 +58,7 @@ INSTALLED_APPS = [
     # added app pages
     'dashboard',
     'invites',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -90,30 +96,41 @@ WSGI_APPLICATION = 'showUp_project.wsgi.application'
 
 # added if condition to use sqlite for local dev, cloud sql mysql for production
 if os.getenv("USE_CLOUD_SQL") == "true":
+    print("USING CLOUD SQL")
+
     from google.cloud.sql.connector import Connector
     import pymysql
 
     connector = Connector()
 
-    def getconn():
+    def getconn(*args, **kwargs):
         return connector.connect(
-            os.environ["INSTANCE_CONNECTION_NAME"],
+            env("INSTANCE_CONNECTION_NAME"),
             "pymysql",
-            user=os.environ["DB_USER"],
-            password=os.environ["DB_PASSWORD"],
-            db=os.environ["DB_NAME"],
+            user=env("DB_USER"),
+            password=env("DB_PASSWORD"),
+            db=env("DB_NAME"),
         )
 
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.mysql",
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": "127.0.0.1",
+            "PORT": "3306",
             "OPTIONS": {
-                "creator": getconn
+                "unix_socket": None,
             },
         }
     }
+    
+    import MySQLdb
+    MySQLdb.connect = getconn
 
 else:
+    print("NOT USING CLOUD SQL")
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -130,16 +147,16 @@ else:
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 

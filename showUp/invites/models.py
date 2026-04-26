@@ -2,13 +2,13 @@ from django.db import models
 
 class ShowUpRSVPs(models.Model):
     rsvpID = models.AutoField(primary_key=True, db_column="RSVPID")
-    eventID = models.ForeignKey(
-        'EventPost',
+    event = models.ForeignKey(
+        'dashboard.EventPost',
         on_delete=models.CASCADE,
         db_column='eventID',
     )
-    userID = models.ForeignKey(
-        'ShowUpUser',
+    user = models.ForeignKey(
+        'accounts.ShowUpUser',
         on_delete=models.CASCADE,
         db_column='userID',
     )

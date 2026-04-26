@@ -17,5 +17,6 @@ do not push database
 gcp is hosted elsewhere, no need to disclude
 db.sqlite3
 /media/
+staticfiles/
 
 .idea
