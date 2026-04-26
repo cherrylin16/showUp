@@ -54,7 +54,7 @@ class SignUpForm(UserCreationForm):
             "placeholder": "Confirm password",
         })
 
-        self.fields["birthdate"].help_text = "Optional. Use the date picker or YYYY-MM-DD."
+        # self.fields["birthdate"].help_text = "Optional. Use the date picker or YYYY-MM-DD."
         # self.fields["password1"].help_text = "Your password must meet the rules listed below."
         
         
