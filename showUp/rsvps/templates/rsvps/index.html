@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <style>
+            .rsvp-body {
+                display: flex;
+                justify-content: space-between;
+                padding: 15px;
+            }
+
+            .rsvp-options {
+                align-items: center;
+            }
+
+            .rsvp-buttons-box {
+                display: flex;
+                gap: 10px;
+            }
+
+            .invites-body {
+                display: inline-flex;
+                gap: 10px;
+                padding: 10px;
+                padding-top: 0px;
+            }
+
+            .invites-card {
+                border: 1px solid black;
+                padding: 10px;
+                padding-top: 0px;
+            }
+
+            .rsvp-buttons {
+                display: inline-block;
+                background-color: white;
+                border: 2px solid;
+                border-radius: 5px;
+                padding: 15px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+                align-content: center;
+                font-size: 25px;
+                cursor: pointer;
+                transition: all 0.2s ease;
+            }
+
+            .yes {
+                border-color: green;
+            }
+
+            .maybe {
+                border-color: orange;
+            }
+
+            .no {
+                border-color: red;
+            }
+
+            #rsvp_yes:checked + label {
+                background-color: green;
+                color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            #rsvp_maybe:checked + label {
+                background-color: orange;
+                color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            #rsvp_no:checked + label {
+                background-color: red;
+                color: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            textarea {
+                width: 80%;
+            }
+
+            .rsvp-submit {
+                padding: 10px;
+                display: flex;
+                justify-content: center;
+            }
+
+            .rsvp-submit button {
+                background-color: white;
+                border-radius: 3px;
+                font-size: 15px;
+                cursor: pointer;
+            }
+        </style>        
+    </head>
+    <body>    
+        {% include "static/navigationbar.html" %}
+        <div class="rsvp-body col-12">
+            <div class="invites-card col-3">
+                <h2>Event Name</h2>
+                <p>Host: </p>
+                <p>Date: </p>
+                <p>Time: </p>
+                <p>Description: </p>
+                <p>Location: </p>
+                <p>Theme: </p>
+            </div>
+            <form  method="" action="{% url 'invites:index' %}" class="rsvp-options col-8">
+                <h1>Show Up. (?)</h1> 
+                <div class="rsvp-buttons-box">
+                    <input type="radio" id="rsvp_yes" name="rsvp" value="yes" style="display: none;">
+                    <label for="rsvp_yes" class="rsvp-buttons yes">Yes</label>
+
+                    <input type="radio" id="rsvp_maybe" name="rsvp" value="maybe" style="display: none;">
+                    <label for="rsvp_maybe" class="rsvp-buttons maybe">Maybe</label>
+
+                    <input type="radio" id="rsvp_no" name="rsvp" value="no" style="display: none;">
+                    <label for="rsvp_no" class="rsvp-buttons no">No</label>
+                </div> 
+                <h2>Bring anything?</h2>
+                <textarea id="bringing" rows=4 placeholder="Enter items you will bring here"></textarea>
+                <h2>Additional Comments</h2>
+                <textarea id="comment" rows=4 placeholder="Type a message here"></textarea>
+                <div class="rsvp-submit">
+                    <button type="submit">Submit RSVP</button>
+                </div> 
+            </form>
+        </div>
+    </body>
+</html>

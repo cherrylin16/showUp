@@ -15,6 +15,7 @@
                 background-color: white;
                 border-radius: 3px;
                 font-size: 15px;
+                height: 40px;
             }
 
             #InvitesSearchTextBox {
@@ -37,8 +38,15 @@
 
             button {
                 background-color: white;
-                border-radius: 3px;
+                border-radius: 5px;
                 font-size: 15px;
+                align-items: center;
+                cursor: pointer;
+            }
+
+            .rsvp-button {
+                display: flex;
+                justify-content: center;
             }
         </style>        
     </head>
@@ -58,15 +66,20 @@
         <div class="invites-body col-12">    
             <div class="invites-card col-3">
                 <h2>Event Name</h2>
+                <p>Host: </p>
                 <p>Date: </p>
                 <p>Time: </p>
-                <p>Host: </p>
                 <p>Theme: </p>
-                <div>
-                    <button type="button" style="border-color: green;">Yes</button>
-                    <button type="button" style="border-color: orange;">Maybe</button>
-                    <button type="button" style="border-color: red;">No</button>
-                </div>
+                <p>Going? </p>
+                <!-- conditional to show button if not rsvp'd otherwise, show the status -->
+                <form method="" action="{% url 'rsvps:index' %}" class="rsvp-button">
+                    {% csrf_token %}
+                    <button type="submit" name="event_id">RSVP</button>
+                </form>
+                <!-- <form method="" action="{% url 'rsvps:index' %}" class="rsvp-button">
+                    {% csrf_token %}
+                    <button type="submit" name="event_id">Update RSVP</button>
+                </form> -->
             </div>
         </div>
     </body>
