@@ -1,10 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        
+        <style>
+            .tools {
+                display: flex;
+                justify-content: space-between;
+                padding: 10px;
+                padding-top: 20px;
+                padding-bottom: 0px;
+            }
+
+            .tools-content {
+                font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                background-color: white;
+                border-radius: 3px;
+                font-size: 15px;
+            }
+
+            #InvitesSearchTextBox {
+                font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+                border-radius: 3px;
+            }
+
+            .invites-body {
+                display: inline-flex;
+                gap: 10px;
+                padding: 10px;
+                padding-top: 0px;
+            }
+
+            .invites-card {
+                border: 1px solid black;
+                padding: 10px;
+                padding-top: 0px;
+            }
+
+            button {
+                background-color: white;
+                border-radius: 3px;
+                font-size: 15px;
+            }
+        </style>        
     </head>
     <body>    
         {% include "static/navigationbar.html" %}
-        <p>Invites page</p>
+        <div class="tools">
+            <input id="InvitesSearchTextBox" type="text" class="col-10" placeholder="Search" />
+            <select class="tools-content">
+                <option value="All">All Invites</option>
+                <option value="Yes">Yes</option>
+                <option value="Maybe">Maybe</option>
+                <option value="No">No</option>
+            </select>
+            <button type="button" class="tools-content">Create Event</button>
+        </div>
+        <h1 style="padding-left: 10px;">Invites</h1>
+        <div class="invites-body col-12">    
+            <div class="invites-card col-3">
+                <h2>Event Name</h2>
+                <p>Date: </p>
+                <p>Time: </p>
+                <p>Host: </p>
+                <p>Theme: </p>
+                <div>
+                    <button type="button" style="border-color: green;">Yes</button>
+                    <button type="button" style="border-color: orange;">Maybe</button>
+                    <button type="button" style="border-color: red;">No</button>
+                </div>
+            </div>
+        </div>
     </body>
 </html>
