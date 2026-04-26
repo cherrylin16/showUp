@@ -76,3 +76,36 @@ class LoginForm(AuthenticationForm):
         "class": "form-control",
         "placeholder": "Password"
     }))
+    
+    
+    
+class ProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = ShowUpUser
+        fields = (
+            "firstName",
+            "lastName",
+            "email",
+            "phone",
+            "birthdate",
+            "pfp",
+            "preferenceID",
+        )
+
+        widgets = {
+            "firstName": forms.TextInput(attrs={"class": "form-control"}),
+            "lastName": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+            "phone": forms.TextInput(attrs={"class": "form-control"}),
+            "birthdate": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "pfp": forms.FileInput(attrs={"class": "form-control"}),
+            "preferenceID": forms.Select(
+                choices=[
+                    (1, "Email notifications"),
+                    (2, "Text notifications"),
+                    (3, "Email and text notifications"),
+                    (4, "No notifications"),
+                ],
+                attrs={"class": "form-control"},
+            ),
+        }
