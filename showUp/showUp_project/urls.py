@@ -20,6 +20,5 @@ from django.urls import include, path
 urlpatterns = [
     path('', include("dashboard.urls")),
     path('invites/', include("invites.urls", namespace="invites")),
-    path('rsvps/', include("rsvps.urls", namespace="rsvps")),
     path('admin/', admin.site.urls),
 ]

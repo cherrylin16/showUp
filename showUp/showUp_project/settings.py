@@ -53,7 +53,6 @@ INSTALLED_APPS = [
     # added app pages
     'dashboard',
     'invites',
-    'rsvps',
 ]
 
 MIDDLEWARE = [
