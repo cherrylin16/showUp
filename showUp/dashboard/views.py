@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
 # import forms
@@ -9,6 +10,7 @@ from .models import EventPost
 
 
 # Create your views here.
+@login_required
 def dashboard_home(request):
     # return HttpResponse("Setting up our initial Django app.")
 
@@ -21,7 +23,7 @@ def dashboard_home(request):
 
     return render(request, "dashboard/home.html", context)
 
-
+@login_required
 def create_event_post(request):
     if request.method == 'POST':
         # Handle deletion
