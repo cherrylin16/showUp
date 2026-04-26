@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm
-from .models import ShowUpUser
+from .models import ShowUpUser, Preference
 from django import forms
 
 class SignUpForm(UserCreationForm):
@@ -11,7 +11,6 @@ class SignUpForm(UserCreationForm):
             "email",
             "phone",
             "birthdate",
-            "pfp",
             "password1",
             "password2",
         )
@@ -37,18 +36,13 @@ class SignUpForm(UserCreationForm):
                 "class": "form-control",
                 "type": "date",
             }),
-            "pfp": forms.FileInput(attrs={
-                "class": "form-control",
-            }),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Optional fields
-        self.fields["phone"].required = False
-        self.fields["birthdate"].required = False
-        self.fields["pfp"].required = False
+        self.fields["phone"].required = True
+        self.fields["birthdate"].required = True
 
         # Bootstrap password fields
         self.fields["password1"].widget.attrs.update({
@@ -60,7 +54,7 @@ class SignUpForm(UserCreationForm):
             "placeholder": "Confirm password",
         })
 
-        self.fields["birthdate"].help_text = "Optional. Use the date picker or YYYY-MM-DD."
+        # self.fields["birthdate"].help_text = "Optional. Use the date picker or YYYY-MM-DD."
         # self.fields["password1"].help_text = "Your password must meet the rules listed below."
         
         
@@ -88,8 +82,6 @@ class ProfileUpdateForm(forms.ModelForm):
             "email",
             "phone",
             "birthdate",
-            "pfp",
-            "preferenceID",
         )
 
         widgets = {
@@ -98,14 +90,13 @@ class ProfileUpdateForm(forms.ModelForm):
             "email": forms.EmailInput(attrs={"class": "form-control"}),
             "phone": forms.TextInput(attrs={"class": "form-control"}),
             "birthdate": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
-            "pfp": forms.FileInput(attrs={"class": "form-control"}),
-            "preferenceID": forms.Select(
-                choices=[
-                    (1, "Email notifications"),
-                    (2, "Text notifications"),
-                    (3, "Email and text notifications"),
-                    (4, "No notifications"),
-                ],
-                attrs={"class": "form-control"},
-            ),
+        }
+        
+class PreferenceUpdateForm(forms.ModelForm):
+    class Meta:
+        model = Preference
+        fields = ("notifications",)
+
+        widgets = {
+            "notifications": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
