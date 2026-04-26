@@ -65,10 +65,13 @@
                     <option value="Yes">Yes</option>
                     <option value="Maybe">Maybe</option>
                     <option value="No">No</option>
-                    <option value="No RSVP">Not Response Yet</option>
+                    <option value="No_RSVP">Not Response Yet</option>
                 </select>
             </form>
-            <button type="button" class="tools-content">Create Event</button>
+            <form method="" action="{% url 'dashboard:create_event_post' %}" class="tools-content">
+                {% csrf_token %}
+                <button type="button">Create Event</button>
+            </form>
         </div>
         <h1 style="padding-left: 10px;">Invites</h1>
         <div class="invites-body col-12">  
@@ -81,15 +84,17 @@
                         <p>Time: </p>
                         <p>Theme: </p>
                         <p>Going? </p>
-                        <!-- conditional to show button if not rsvp'd otherwise, show the status -->
-                        <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
-                            {% csrf_token %}
-                            <button type="submit" name="event_id">RSVP</button>
-                        </form>
-                        <!-- <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
-                            {% csrf_token %}
-                            <button type="submit" name="event_id">Update RSVP</button>
-                        </form> -->
+                        {% if invite.status == 'Yes' or invite.status == 'Maybe' or invite.status == 'No' %}
+                            <form method="" action="{% url 'invites:rsvp_form?rsvp={{ invite.rsvpID }}' %}" class="rsvp-button">
+                                {% csrf_token %}
+                                <button type="submit" name="event_id">Update RSVP</button>
+                            </form>
+                        {% else %}
+                            <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
+                                {% csrf_token %}
+                                <button type="submit" name="event_id">RSVP</button>
+                            </form>
+                        {% endif %}
                     {% endfor %}
                 {% else %}
                         <h3>No event invites yet</h3>
