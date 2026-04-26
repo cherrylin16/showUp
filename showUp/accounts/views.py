@@ -3,11 +3,13 @@ from django.contrib.auth import login
 from django.contrib import messages
 from .forms import SignUpForm, ProfileUpdateForm
 from django.contrib.auth.decorators import login_required
+from .models import ShowUpUser, ShowUpUserManager
 
 # Create your views here.
 def signup_view(request):
     if request.method == "POST":
         form = SignUpForm(request.POST, request.FILES)
+        user = ShowUpUser()
 
         if form.is_valid():
             user.preferenceID = 1
