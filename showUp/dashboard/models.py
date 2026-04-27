@@ -34,3 +34,16 @@ class EventPost(models.Model):
     class Meta:
         ordering = ['-created_at']
     
+
+class EventPhoto(models.Model):
+    event = models.ForeignKey(
+        EventPost,
+        on_delete=models.CASCADE,
+        related_name="photos"
+    )
+
+    image = models.BinaryField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "ShowUp_EventPhotos"
