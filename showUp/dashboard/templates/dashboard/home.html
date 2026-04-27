@@ -86,11 +86,13 @@
                                                     Event Details
                                                 </button>
 
-                                                <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
-                                                    {% csrf_token %}
-                                                    <input type="hidden" name="eventID" value="{{ post.id }}">
-                                                    <button type="submit" class="btn btn-primary rsvp-button">RSVP</button>
-                                                </form>
+                                                {% if post.author != request.user %}
+                                                    <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
+                                                        {% csrf_token %}
+                                                        <input type="hidden" name="eventID" value="{{ post.id }}">
+                                                        <button type="submit" class="btn btn-primary rsvp-button">RSVP</button>
+                                                    </form>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
@@ -238,11 +240,13 @@
                                                 </div>
 
                                                 <div class="modal-footer">
-                                                    <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
-                                                        {% csrf_token %}
-                                                        <input type="hidden" name="eventID" value="{{ post.id }}">
-                                                        <button class="btn btn-primary">RSVP</button>
-                                                    </form>
+                                                    {% if post.author != request.user %}
+                                                        <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="eventID" value="{{ post.id }}">
+                                                            <button type="submit" class="btn btn-primary rsvp-button">RSVP</button>
+                                                        </form>
+                                                    {% endif %}
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 </div>
                                             </div>
