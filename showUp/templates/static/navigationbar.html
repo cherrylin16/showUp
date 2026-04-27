@@ -1,87 +1,36 @@
 {% load static %}
-<style>
-    body {
-        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    }
 
-    .col-1 {
-        width: 8.3%
-    }
-
-    .col-3 {
-        width: 25%
-    }
-    
-    .col-4 {
-        width: 33.3%
-    }
-
-    .col-6 {
-        width: 50%
-    }
-    
-    .col-8 {
-        width: 66.7%
-    }
-
-    .col-10 {
-        width: 83.3%
-    }
-
-    .col-11 {
-        width: 91.7%
-    }
-
-    .col-12 {
-        width: 100%
-    }
-
-    .navbar {
-        position: sticky;
-        top: 0px;
-        left: 0px;
-        /* width: 100lvw; */
-        padding: 10px;
-        background-color: black;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    }
-
-    .navbar a {
-        color: white;
-        text-decoration: none;
-        padding: 5px;
-        margin: 10px;
-        font-size: 20px;
-        border: 1px solid white;
-    }
-
-    .page-title {
-        float: left;
-        font-size: 25px;
-        padding-top: 0px;
-        padding-bottom: 0px;
-    }
-
-    .nav-links {
-        float: right;
-    }
-</style>
 <header class="navbar">
-    <div class="page-title">
-        <h3>Show Up.</h3>
+    <link rel="stylesheet" href="{% static 'dashboard_home.css' %}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">     
+    
+    <nav class="navbar navbar-expand-lg w-100 navbar-dark bg-dark sticky-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-semibold" href="{% url 'dashboard_home' %}">
+                Show Up.
+            </a>
+        </div>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'dashboard_home' %}">Dashboard</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'invites:index' %}">Invites</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Profile</a>
+                </li>
+            </ul>
+        </div>
+
     </div>
-    <nav class="nav-links">
-        <a href="{% url 'dashboard_home' %}">Dashboard</a>
-        <a href="{% url 'invites:index' %}">Invites</a>
-        <a href="{% url 'profile' %}">Profile</a>
-        <form method="post" action="{% url 'logout' %}" style="display: inline;">{% csrf_token %}
-            <button type="submit" class="btn btn-outline-danger">
-                Logout
-            </button>
-        </form>
-    </nav>
+</nav>
 </header>

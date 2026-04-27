@@ -1,105 +1,97 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <style>
-            .tools {
-                display: flex;
-                justify-content: space-between;
-                padding: 10px;
-                padding-top: 20px;
-                padding-bottom: 0px;
-            }
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-            .tools-content {
-                font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-                background-color: white;
-                border-radius: 3px;
-                font-size: 15px;
-                height: 40px;
-            }
-
-            #InvitesSearchTextBox {
-                font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-                border-radius: 3px;
-            }
-
-            .invites-body {
-                display: inline-flex;
-                gap: 10px;
-                padding: 10px;
-                padding-top: 0px;
-            }
-
-            .invites-card {
-                border: 1px solid black;
-                padding: 10px;
-                padding-top: 0px;
-            }
-
-            button {
-                background-color: white;
-                border-radius: 5px;
-                font-size: 15px;
-                align-items: center;
-                cursor: pointer;
-            }
-
-            .rsvp-button {
-                display: flex;
-                justify-content: center;
-            }
-        </style>        
+        <link rel="stylesheet" href="{% static 'dashboard_home.css' %}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">     
     </head>
-    <body>    
+    <body class="bg-light">    
         {% include "static/navigationbar.html" %}
-        <div class="tools">
-            <form method="GET" class="tools-content col-10" style="display: flex;">
-                {% csrf_token %}
-                <input id="InvitesSearchTextBox" type="search" class="col-10" value="{{ search }}" placeholder="Search" />
-                <button type="submit">Search</button>
-            </form>
-            <form method="GET">
-                {% csrf_token %}
-                <select name="filter" id="filter" class="tools-content">
-                    <option value="All">All Invites</option>
-                    <option value="Yes">Yes</option>
-                    <option value="Maybe">Maybe</option>
-                    <option value="No">No</option>
-                    <option value="No_RSVP">Not Response Yet</option>
-                </select>
-            </form>
-            <form method="" action="{% url 'dashboard:create_event_post' %}" class="tools-content">
-                {% csrf_token %}
-                <button type="button">Create Event</button>
-            </form>
+        <div class="container py-4">
+             <div class="row g-2 align-items-center mb-4">
+                <div class="col-md-6">
+                    <form method="GET" class="d-flex gap-2" style="display: flex;">
+                        {% csrf_token %}
+                        <input name="search" type="search" class="form-control" value="{{ search }}" placeholder="Search for events by name" />
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </form>
+                </div>
+
+                <div class="col-md-4">
+                    <form method="GET" class="d-flex gap-2">
+                        {% csrf_token %}
+                        <select name="filter" id="filter" class="form-select">
+                            <option value="All">All Invites</option>
+                            <option value="Yes">Yes</option>
+                            <option value="Maybe">Maybe</option>
+                            <option value="No">No</option>
+                            <option value="No_RSVP">Not Response Yet</option>
+                        </select>
+                        <button type="submit" class="btn btn-outline-secondary">Filter</button>
+                    </form>
+                </div>
+
+                <form method="GET" action="{% url 'create_event_post' %}" class="col-md-2 text-end">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-success w-100">Create Event</button>
+                </form>
+             </div>
         </div>
-        <h1 style="padding-left: 10px;">Invites</h1>
-        <div class="invites-body col-12">  
+        <h1 class="m-3">Invites</h1>
+        <div class="row g-4 m-3">  
+            {{ userID }}
             {% if user_invites %}  
                 {% for invite in user_invites %}
-                    <div class="invites-card col-3">
-                        <h2>Event Name</h2>
-                        <p>Host: </p>
-                        <p>Date: </p>
-                        <p>Time: </p>
-                        <p>Theme: </p>
-                        <p>Going? </p>
-                        {% if invite.status == 'Yes' or invite.status == 'Maybe' or invite.status == 'No' %}
-                            <form method="" action="{% url 'invites:rsvp_form?rsvp={{ invite.rsvpID }}' %}" class="rsvp-button">
-                                {% csrf_token %}
-                                <button type="submit" name="event_id">Update RSVP</button>
-                            </form>
-                        {% else %}
-                            <form method="" action="{% url 'invites:rsvp_form' %}" class="rsvp-button">
-                                {% csrf_token %}
-                                <button type="submit" name="event_id">RSVP</button>
-                            </form>
-                        {% endif %}
-                    {% endfor %}
-                {% else %}
-                        <h3>No event invites yet</h3>
-                {% endif %}
-            </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ invite.eventName }}</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">Host: {{ invite.firstName }} {{ invite.lastName }}</h6>
+                                <p class="mb-1"><strong>Date:</strong> {{ invite.date }}</p>
+                                <p class="mb-1"><strong>Time:</strong> {{ invite.time }}</p>
+                                {% if invite.theme %}
+                                    <p class="mb-2"><strong>Theme:</strong> {{ invite.theme }}</p>
+                                {% else %}
+                                    <p class="mb-2"><strong>Theme:</strong> N/A</p>
+                                {% endif %}
+                                {% if invite.status %}
+                                    <span class="badge 
+                                        {% if invite.status == 'Yes' %} bg-success
+                                        {% elif invite.status == 'Maybe' %} bg-warning text-dark
+                                        {% elif invite.status == 'No' %} bg-danger
+                                        {% endif %}">
+                                        {{ invite.status }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-secondary">No Response Yet</span>
+                                {% endif %}
+                                <div class="mt-auto pt-3">
+                                    <form method="POST" action="{% url 'invites:rsvp_form' %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="rsvpID" value="{{ invite.rsvpID }}">
+
+                                        {% if invite.status %}
+                                            <button class="btn btn-outline-primary w-100">
+                                                Update RSVP
+                                            </button>
+                                        {% else %}
+                                            <button class="btn btn-primary w-100">
+                                                RSVP
+                                            </button>
+                                        {% endif %}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <h3>No event invites yet</h3>
+            {% endif %}
         </div>
     </body>
 </html>
