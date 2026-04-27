@@ -9,6 +9,7 @@ from django.db import connection
 # import forms
 from .forms import EventPostForm
 from .models import EventPost, Budget, EventPhoto, Orders, Catering, Caterer
+from invites.models import ShowUpRSVPs
 
 # querying
 from django.db.models import Q
@@ -19,7 +20,10 @@ import base64
 @login_required
 def dashboard_home(request):
     form = EventPostForm()
-    posts = EventPost.objects.all()
+    posts = EventPost.objects.filter(
+        Q(author=request.user) |
+        Q(id__in=ShowUpRSVPs.objects.filter(user=request.user).values_list("event_id", flat=True))
+    ).distinct()
 
     query = request.GET.get('q', '')
     date_filter = request.GET.get('date', '')

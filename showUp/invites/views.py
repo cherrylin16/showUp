@@ -31,33 +31,85 @@ def index(request):
 
 def rsvp_form(request):
     userID = request.user.userID
+
     if request.method == "POST":
         eventID = request.POST.get('eventID')
         rsvpID = request.POST.get('rsvpID')
         status = request.POST.get('rsvp')
         comment = request.POST.get('comment')
+
         if eventID:
             with connection.cursor() as cursor:
-                cursor.execute('SELECT RSVPID, status, message FROM ShowUp_RSVPs WHERE eventID = %s AND userID = %s;', [eventID, userID])
+                cursor.execute(
+                    '''
+                    SELECT RSVPID, status, message
+                    FROM ShowUp_RSVPs
+                    WHERE eventID = %s AND userID = %s;
+                    ''',
+                    [eventID, userID]
+                )
                 rows = cursor.fetchone()
-                if not rows:
-                    cursor.execute('INSERT INTO ShowUp_RSVPs (eventID, userID) VALUES (%s, %s);', [eventID, userID])
-                    cursor.execute('SELECT RSVPID, status, message FROM ShowUp_RSVPs WHERE eventID = %s AND userID = %s;', [eventID, userID])
-                    rows = cursor.fetchone()
+
+            if not rows:
+                return HttpResponse("You are not invited to this event.", status=403)
+
             rsvpID = rows[0]
             status = rows[1]
             comment = rows[2]
-        else:       
+
+        else:
             if status:
                 with connection.cursor() as cursor:
-                    cursor.execute('UPDATE ShowUp_RSVPs SET status = %s, message = %s WHERE RSVPID = %s;', [status, comment, rsvpID])
+                    cursor.execute(
+                        '''
+                        UPDATE ShowUp_RSVPs
+                        SET status = %s, message = %s
+                        WHERE RSVPID = %s AND userID = %s;
+                        ''',
+                        [status, comment, rsvpID, userID]
+                    )
                 return redirect("invites:index")
 
         with connection.cursor() as cursor:
-            cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, e.description, e.location, u.firstName, u.lastName, r.status, r.message, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE r.RSVPID = %s;', [rsvpID])
+            cursor.execute(
+                '''
+                SELECT e.eventName, e.date, e.time, e.theme, e.description,
+                       e.location, u.firstName, u.lastName, r.status,
+                       r.message, r.RSVPID
+                FROM ShowUp_Users u
+                JOIN ShowUp_RSVPs r ON u.userID = r.userID
+                JOIN ShowUp_Events e ON r.eventID = e.eventID
+                WHERE r.RSVPID = %s AND r.userID = %s;
+                ''',
+                [rsvpID, userID]
+            )
             rows = cursor.fetchone()
 
-        invite = {"eventName": rows[0], "date": rows[1], "time": rows[2], "theme": rows[3], "description": rows[4], "location": rows[5], "firstName": rows[6], "lastName": rows[7], "status": rows[8], "message": rows[9], "rsvpID": rows[10]}
-        context = {"user_invite" : [invite], "rsvpID": rsvpID, "status": status, "comment": comment, "user": userID}
+        if not rows:
+            return HttpResponse("RSVP not found.", status=404)
+
+        invite = {
+            "eventName": rows[0],
+            "date": rows[1],
+            "time": rows[2],
+            "theme": rows[3],
+            "description": rows[4],
+            "location": rows[5],
+            "firstName": rows[6],
+            "lastName": rows[7],
+            "status": rows[8],
+            "message": rows[9],
+            "rsvpID": rows[10],
+        }
+
+        context = {
+            "user_invite": [invite],
+            "rsvpID": rsvpID,
+            "status": status,
+            "comment": comment,
+            "user": userID,
+        }
+
         return render(request, "invites/rsvp_form.html", context)
+
     return render(request, "invites/index.html")
