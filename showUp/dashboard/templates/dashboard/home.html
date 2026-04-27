@@ -108,7 +108,7 @@
                                                             <ul class="list-group list-group-flush">
                                                                 <li class="list-group-item"><strong>Host:</strong> {{ post.host_name }}</li>
                                                                 <li class="list-group-item"><strong>Date:</strong> {{ post.date }}</li>
-                                                                <li class="list-group-item"><strong>Time:</strong> {{ post.start_time|time:"g:i A" }} - {{ post.end_time|time:"g:i A" }}</li>
+                                                                <li class="list-group-item"><strong>Time:</strong> {{ post.time|time:"g:i A" }}</li>
                                                                 <li class="list-group-item"><strong>Location:</strong> {{ post.location }}</li>
                                                             </ul>
                                                         </div>
@@ -246,14 +246,10 @@
                                     {{ form.date }}
                             </div>
                             <div class="mb-3">
-                                    <label class="form-label">Start Time</label>
-                                    {{ form.start_time }}
+                                    <label class="form-label">Time</label>
+                                    {{ form.time }}
                             </div> 
-
-                                <div class="mb-3">
-                                    <label class="form-label">End Time</label>
-                                    {{ form.end_time }}
-                            </div>   
+                            
                             <div class="mb-3">
                                     <label class="form-label">Location, please enter a valid address.</label>
                                     {{ form.location }}
@@ -366,14 +362,10 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Start Time</label>
-                            <input type="time" name="start_time" class="form-control" value="{{ request.GET.start_time }}">
+                            <label class="form-label">Time</label>
+                            <input type="time" name="time" class="form-control" value="{{ request.GET.time }}">
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">End Time</label>
-                            <input type="time" name="end_time" class="form-control" value="{{ request.GET.end_time }}">
-                        </div>
                     </div>
 
                     <div class="modal-footer flex-column">

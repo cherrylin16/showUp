@@ -26,7 +26,6 @@ class Migration(migrations.Migration):
                 ('date', models.TextField(default='')),
                 ('event_description', models.TextField(blank=True, default='')),
                 ('start_time', models.TimeField()),
-                ('end_time', models.TimeField()),
                 ('image', models.ImageField(blank=True, null=True, upload_to='carpool_posts/')),
                 ('image_visibility', models.CharField(choices=[('all', 'All Users')], default='all', max_length=10)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),

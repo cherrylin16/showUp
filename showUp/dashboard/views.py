@@ -21,6 +21,7 @@ def dashboard_home(request):
 
     query = request.GET.get('q', '')
     date_filter = request.GET.get('date', '')
+    time_filter = request.GET.get('time', '')
 
     if query:
         posts = posts.filter(
@@ -40,6 +41,11 @@ def dashboard_home(request):
     if date_filter:
         posts = posts.filter(date=date_filter)
 
+    if time_filter:
+        posts = posts.filter(pickup_time__icontains=time_filter)
+    
+
+    # Separate active and previous posts
     now = datetime.now()
     current_date = now.date()
     current_time = now.time()
