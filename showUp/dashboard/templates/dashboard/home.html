@@ -20,7 +20,7 @@
     </script>
 
 
-    <body>    
+    <body class="{% if request.user.is_authenticated and request.user.preference.lightMode == 'Dark' %}dark-mode{% endif %}">
         {% include "static/navigationbar.html" %}
         <div class="wrapper">
             <div class="main">
@@ -53,52 +53,57 @@
                     <h5>Active Event Listings</h5>
                 </div> -->
 
-        <div class="listings-filters-container mt-3 d-flex">
-                <div class="listings-box flex-grow-1 me-4">
-                    <div class="row">
-                        {% for post in active_posts %}
-                            <div class="col-xl-4 col-lg-4 col-md-6 mb-3">
-                                <div class="card position-relative h-100 bg-light">
-                                    <div class="card-body d-flex flex-column">
-                                        <h6 class="card-subtitle mb-3"><strong>{{post.event_name}}</strong></h6>
-                                        <p class="card-text"><i>Hosted By:</i> {{ post.host_name }}</p>
-                                        <p class="card-text"><i>Date:</i> {{ post.date }}</p>
-                                        <!-- <p class="card-text"><i>Pickup</i>: {{ post.pickup }} at {{ post.pickup_time|time:"g:i A" }}</p>
-                                        <p class="card-text"><i>Dropoff:</i> {{ post.dropoff }} at {{ post.dropoff_time|time:"g:i A" }}</p> -->
-                                        <p class="card-text"><i>Description:</i> {{ post.event_description|linebreaksbr }}</p>
+                <div class="listings-filters-container mt-3 d-flex">
+                    <div class="listings-box flex-grow-1 me-4">
+                        <div class="row">
+                            {% for post in active_posts %}
+                                <div class="col-xl-4 col-lg-4 col-md-6 mb-3">
+                                    <div class="card position-relative h-100 bg-light">
+                                        <div class="card-body d-flex flex-column">
 
-                                        <div class="d-flex justify-content-center align-items-center mt-auto gap-2">
-                                            {% if post.author == request.user %}
-                                                <button class="btn btn-sm btn-danger"
-                                                    data-bs-toggle="modal"
-                                                    data-bs-target="#deletePostModal"
-                                                    data-post-id="{{ post.id }}">
-                                                Delete
+                                            <h6 class="card-subtitle mb-3">
+                                                <strong>{{ post.event_name }}</strong>
+                                            </h6>
+
+                                            <p class="card-text"><i>Hosted By:</i> {{ post.host_name }}</p>
+                                            <p class="card-text"><i>Date:</i> {{ post.date }}</p>
+                                            <p class="card-text"><i>Description:</i> {{ post.event_description|linebreaksbr }}</p>
+
+                                            <div class="d-flex justify-content-center align-items-center mt-auto gap-2 flex-wrap">
+                                                {% if post.author == request.user %}
+                                                    <button class="btn btn-sm btn-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deletePostModal"
+                                                            data-post-id="{{ post.id }}">
+                                                        Delete
+                                                    </button>
+                                                {% endif %}
+
+                                                <button type="button"
+                                                        class="btn btn-outline-primary btn-sm"
+                                                        data-bs-toggle="modal"
+                                                        data-bs-target="#detailsModal{{ post.id }}">
+                                                    Event Details
                                                 </button>
-                                            {% endif %}
 
-                                            <button type="button" class="btn btn-outline-primary btn-sm" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#detailsModal{{ post.id }}">
-                                                Event Details
-                                            </button>
-                                            <button type="type" class="btn btn-primary rsvp-button" data-bs-dismiss="modal">RSVP</button>
-
-                                        </div>    
+                                                <button type="button"
+                                                        class="btn btn-primary btn-sm rsvp-button">
+                                                    RSVP
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="modal fade" id="detailsModal{{ post.id }}" tabindex="-1" aria-hidden="true">
+                                    <div class="modal fade" id="detailsModal{{ post.id }}" tabindex="-1" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered modal-lg">
                                             <div class="modal-content">
                                                 <div class="modal-header bg-light">
                                                     <h5 class="modal-title"><strong>{{ post.event_name }}</strong></h5>
                                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                
+
                                                 <div class="modal-body">
                                                     <div class="row">
-
                                                         <div class="col-md-7">
                                                             <ul class="list-group list-group-flush">
                                                                 <li class="list-group-item"><strong>Host:</strong> {{ post.host_name }}</li>
@@ -129,26 +134,69 @@
                                                         <h6 class="text-primary border-bottom pb-2">Description</h6>
                                                         <p>{{ post.event_description|linebreaksbr }}</p>
                                                     </div>
+
+                                                    <div class="mt-4">
+                                                        <h6 class="text-primary border-bottom pb-2">Event Photos</h6>
+
+                                                        {% if post.display_photos %}
+                                                            <div class="row">
+                                                                {% for photo in post.display_photos %}
+                                                                    <div class="col-md-4 mb-3">
+                                                                        <img src="data:image/jpeg;base64,{{ photo.image }}"
+                                                                            class="img-fluid rounded w-100"
+                                                                            style="height: 150px; object-fit: cover;">
+
+                                                                        {% if post.author == request.user %}
+                                                                            <form method="post"
+                                                                                action="{% url 'delete_event_photo' photo.id %}"
+                                                                                class="mt-2">
+                                                                                {% csrf_token %}
+                                                                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                                                                    Delete Photo
+                                                                                </button>
+                                                                            </form>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </div>
+                                                        {% else %}
+                                                            <p class="text-muted">No photos added yet.</p>
+                                                        {% endif %}
+
+                                                        {% if post.author == request.user %}
+                                                            <form method="post"
+                                                                enctype="multipart/form-data"
+                                                                action="{% url 'upload_event_photo' post.id %}"
+                                                                class="mt-3">
+                                                                {% csrf_token %}
+                                                                <label class="form-label">Add a photo</label>
+                                                                <input type="file"
+                                                                    name="image_file"
+                                                                    accept="image/*"
+                                                                    class="form-control mb-2"
+                                                                    required>
+                                                                <button type="submit" class="btn btn-outline-primary btn-sm">
+                                                                    Upload Photo
+                                                                </button>
+                                                            </form>
+                                                        {% endif %}
+                                                    </div>
                                                 </div>
 
                                                 <div class="modal-footer">
-                                                    <button type="type" class="btn btn-primary rsvp-button" data-bs-dismiss="modal">RSVP</button>
+                                                    <button type="button" class="btn btn-primary rsvp-button" data-bs-dismiss="modal">RSVP</button>
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                 </div>
-
-                                
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        {% empty %}
-                            <div class="col-12">
-                                <p class="text-muted">There are currently no active event listings.</p>
-                            </div>
-                        {% endfor %}
-                    </div>
-                    
+                            {% empty %}
+                                <div class="col-12">
+                                    <p class="text-muted">There are currently no active event listings.</p>
+                                </div>
+                            {% endfor %}
+                        </div>
                     {% if previous_posts %}
                     <div class="mt-5">
                         <h5>Previous Event Listings</h5>

@@ -35,3 +35,23 @@ class EventPostForm(forms.ModelForm):
     #     if selected_date < date.today():
     #         raise forms.ValidationError("Trip date cannot be in the past.")
     #     return selected_date
+    
+    
+from .models import EventPost, EventPhoto
+
+class EventPhotoForm(forms.ModelForm):
+    image_file = forms.ImageField(required=True)
+
+    class Meta:
+        model = EventPhoto
+        fields = []
+
+    def save(self, commit=True):
+        photo = super().save(commit=False)
+        uploaded_file = self.cleaned_data["image_file"]
+        photo.image = uploaded_file.read()
+
+        if commit:
+            photo.save()
+
+        return photo

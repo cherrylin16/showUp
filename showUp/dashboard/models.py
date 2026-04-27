@@ -27,6 +27,7 @@ class EventPost(models.Model):
     location = models.TextField(db_column="location")
 
     class Meta:
+<<<<<<< HEAD
         managed = False  
         db_table = 'ShowUp_Events'
 
@@ -60,3 +61,20 @@ class Catering(models.Model):
     class Meta:
         managed = False
         db_table = 'Catering'
+=======
+        ordering = ['-created_at']
+    
+
+class EventPhoto(models.Model):
+    event = models.ForeignKey(
+        EventPost,
+        on_delete=models.CASCADE,
+        related_name="photos"
+    )
+
+    image = models.BinaryField()
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = "ShowUp_EventPhotos"
+>>>>>>> 53fe814224e98f5e04dbddbc74431fddd7aec1b0
