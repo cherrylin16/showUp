@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 from datetime import datetime, date, time
+from django.db import connection
 
 # import forms
 from .forms import EventPostForm
@@ -81,6 +82,12 @@ def dashboard_home(request):
                 "id": photo.id,
                 "image": encoded,
             })
+
+        post.invite_list = []
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE e.eventID = %s;', [post.id])
+            rows = cursor.fetchall()
+            post.invite_list = [{"firstName": r[0], "lastName": r[1], "status": r[2]} for r in rows]
             
     return render(request, "dashboard/home.html", {
         'active_posts': active_posts,
@@ -142,5 +149,19 @@ def delete_event_photo(request, photo_id):
 
     if photo.event.author == request.user:
         photo.delete()
+
+    return redirect("dashboard_home")
+
+@login_required
+def invite_guest(request, post_id):
+    post = get_object_or_404(EventPost, id=post_id)
+
+    if request.method == "POST":
+        guest = request.POST.get('invited')
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT userID FROM ShowUp_Users WHERE email = %s;', [guest])
+            rows = cursor.fetchone()
+            if rows:
+                cursor.execute('INSERT INTO ShowUp_RSVPs (eventID, userID) VALUES (%s, %s);', [post.id, rows[0]])
 
     return redirect("dashboard_home")
