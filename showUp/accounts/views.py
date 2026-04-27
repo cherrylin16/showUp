@@ -39,8 +39,9 @@ def profile_view(request):
 
     if request.method == "POST":
         form = ProfileUpdateForm(request.POST, instance=user)
+        preference_form = PreferenceUpdateForm(request.POST, instance=user.preference)
 
-        if form.is_valid():
+        if form.is_valid() and preference_form.is_valid():
             ShowUpUser.objects.filter(userID=user.userID).update(
                 firstName=form.cleaned_data["firstName"],
                 lastName=form.cleaned_data["lastName"],
@@ -49,11 +50,19 @@ def profile_view(request):
                 birthdate=form.cleaned_data["birthdate"],
             )
 
+            preference_form.save()
+
             messages.success(request, "Profile updated successfully.")
             return redirect("profile")
         else:
             print(form.errors)
+            print(preference_form.errors)
+
     else:
         form = ProfileUpdateForm(instance=user)
+        preference_form = PreferenceUpdateForm(instance=user.preference)
 
-    return render(request, "accounts/profile.html", {"form": form})
+    return render(request, "accounts/profile.html", {
+        "form": form,
+        "preference_form": preference_form,
+    })

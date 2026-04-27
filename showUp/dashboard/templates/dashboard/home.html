@@ -20,7 +20,7 @@
     </script>
 
 
-    <body>    
+    <body class="{% if request.user.is_authenticated and request.user.preference.lightMode == 'Dark' %}dark-mode{% endif %}">
         {% include "static/navigationbar.html" %}
         <div class="wrapper">
             <div class="main">
