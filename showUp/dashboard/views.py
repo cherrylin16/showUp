@@ -48,14 +48,19 @@ def dashboard_home(request):
             Q(event_description__icontains=query) 
         ).distinct()
     
+    view_filter = request.GET.get('view', 'all')
+
+    if view_filter == 'hosting':
+        posts = posts.filter(author=request.user)
+
+    elif view_filter == 'attending':
+        posts = posts.filter(attendees=request.user)
+
+    if query:
+        posts = posts.filter(event_name__icontains=query)
+
     if date_filter:
-        posts = posts.filter(date__icontains=date_filter)
-    
-    if start_time_filter:
-        posts = posts.filter(start_time__icontains=start_time_filter)
-    
-    if end_time_filter:
-        posts = posts.filter(end_time__icontains=end_time_filter)
+            posts = posts.filter(date=date_filter)
 
     # Separate active and previous posts
     now = datetime.now()
@@ -85,23 +90,23 @@ def dashboard_home(request):
         'previous_posts': previous_posts,
         'query': query,
         'form': form,
+        'view_filter': view_filter
     })
 
 @login_required
 def create_event_post(request):
     if request.method == 'POST':
-        # Handle deletion
-        # if 'delete_post_id' in request.POST:
-        #     post_id = request.POST.get('delete_post_id')
-        #     CarpoolPost.objects.filter(id=post_id, author=request.user).delete()
-        #     messages.success(request, 'Post deleted successfully.')
-        #     return redirect('driver dashboard')
+        #Handle deletion
+        if request.POST.get('delete_post_id'):
+            post_id = request.POST.get('delete_post_id')
+            EventPost.objects.filter(id=post_id, author=request.user).delete()
+            return redirect('dashboard_home')
 
         # Handle creation
         form = EventPostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
-            # post.author = request.user
+            post.author = request.user
             post.save()
             return redirect('dashboard_home')
         

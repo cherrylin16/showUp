@@ -3,8 +3,8 @@ from .models import EventPost
 from datetime import date, datetime
 
 class EventPostForm(forms.ModelForm):
-    catering_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00)
-    supplies_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00)
+    catering_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00, required=False)
+    supplies_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00, required=False)
 
     class Meta:
         model = EventPost
@@ -17,7 +17,7 @@ class EventPostForm(forms.ModelForm):
             'start_time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
             'end_time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Street, City, State, Zip Code', 'required': True}),
-            'caterer_address': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Street, City, State, Zip Code', 'required': True}),
+            'caterer_address': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Street, City, State, Zip Code', 'required': False}),
             'caterer_phone': forms.TextInput(attrs={
                     'class': 'form-control', 
                     'placeholder': '123-456-7890',

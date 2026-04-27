@@ -1,33 +1,30 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
-# Create your models here.
-# class User(AbstractUser):
-#     USER_TYPE_CHOICES = [
-#         ('host', 'Host'),
-#         ('attendee', 'Attendee'),
-#         ('admin', 'Admin'),
-#     ]
-#     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, null=True, blank=True)
-
-#     def is_host(self):
-#         return self.user_type == 'host'
-#     def is_attendee(self):
-#         return self.user_type == 'attendee'
-#     def __str__(self):
-#         return self.username
 
 
 class EventPost(models.Model):
-    # author = models.ForeignKey(User, on_delete=models.CASCADE, max_length=100)
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL, 
+        on_delete=models.CASCADE, 
+        related_name='hosted_events'
+    )
+
+    attendees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, 
+        related_name='attending_events',
+        blank=True
+    )
+
     host_name = models.TextField(default="", blank=False)
     event_name = models.TextField(default="", blank=False)
     location = models.TextField(default="",blank=False)
-    caterer_address = models.TextField(default="", blank=False)
-    caterer_phone = models.TextField(default="", blank=False)
-    caterer_name = models.TextField(default="", blank=False)
-    catering_budget = models.TextField(default="", blank=False)
-    supplies_budget = models.TextField(default="", blank=False)
+    caterer_address = models.TextField(default="", blank=True)
+    caterer_phone = models.TextField(default="", blank=True)
+    caterer_name = models.TextField(default="", blank=True)
+    catering_budget = models.TextField(default="", blank=True, null=True)
+    supplies_budget = models.TextField(default="", blank=True, null=True)
     date = models.DateField(default="", blank=False)
     event_description = models.TextField(default="", blank=True)
     start_time = models.TimeField()
@@ -37,5 +34,3 @@ class EventPost(models.Model):
     class Meta:
         ordering = ['-created_at']
     
-    # def __str__(self):
-    #     return f"{self.author.username} - {self.text[:50]}"
