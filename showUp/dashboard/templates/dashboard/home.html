@@ -86,12 +86,10 @@
                                                     Event Details
                                                 </button>
 
-                                                <form method="post" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
+                                                <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
                                                     {% csrf_token %}
-                                                    <!-- <input type="hidden" name="rsvpID" value=""> -->
-                                                    <button type="submit" class="btn btn-primary btn-sm rsvp-button">
-                                                        RSVP
-                                                    </button>
+                                                    <input type="hidden" name="eventID" value="{{ post.id }}">
+                                                    <button type="submit" class="btn btn-primary rsvp-button">RSVP</button>
                                                 </form>
                                             </div>
                                         </div>
@@ -226,9 +224,9 @@
                                                 </div>
 
                                                 <div class="modal-footer">
-                                                    <form method="POST" class="nav-item me-2">
+                                                    <form method="POST" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
                                                         {% csrf_token %}
-                                                        <input type="hidden" name="eventID" value=2>
+                                                        <input type="hidden" name="eventID" value="{{ post.id }}">
                                                         <button class="btn btn-primary">RSVP</button>
                                                     </form>
                                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

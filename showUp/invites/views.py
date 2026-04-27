@@ -8,21 +8,21 @@ def index(request):
     userID = request.user.userID
     # invites = ShowUpRSVPs.objects.filter(user=userID)
     with connection.cursor() as cursor:
-        cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s;', [userID, userID])
+        cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s;', [userID, userID])
         rows = cursor.fetchall()
 
     search = request.GET.get('search', '')
     filtered = request.GET.get('filter', 'All')
     with connection.cursor() as cursor:
         if search:
-            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND e.eventName LIKE %s;', [userID, userID, ('%' + search + '%')])
+            cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND e.eventName LIKE %s;', [userID, userID, ('%' + search + '%')])
             rows = cursor.fetchall()
         
         if filtered == 'No_RSVP':
-            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status IS NULL;', [userID, userID])
+            cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status IS NULL;', [userID, userID])
             rows = cursor.fetchall()
         elif filtered != "All":
-            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status = %s;', [userID, userID, filtered])
+            cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status = %s;', [userID, userID, filtered])
             rows = cursor.fetchall()
     
     invites = [{"eventName": r[0], "date": r[1], "time": r[2], "theme": r[3], "firstName": r[4], "lastName": r[5], "status": r[6], "rsvpID": r[7]} for r in rows]
@@ -32,19 +32,32 @@ def index(request):
 def rsvp_form(request):
     userID = request.user.userID
     if request.method == "POST":
+        eventID = request.POST.get('eventID')
         rsvpID = request.POST.get('rsvpID')
         status = request.POST.get('rsvp')
         comment = request.POST.get('comment')
-        if status:
+        if eventID:
             with connection.cursor() as cursor:
-                cursor.execute('UPDATE ShowUp_RSVPs SET status = %s, message = %s WHERE RSVPID = %s;', [status, comment, rsvpID])
-            return redirect("invites:index")
+                cursor.execute('SELECT RSVPID, status, message FROM ShowUp_RSVPs WHERE eventID = %s AND userID = %s;', [eventID, userID])
+                rows = cursor.fetchone()
+                if not rows:
+                    cursor.execute('INSERT INTO ShowUp_RSVPs (eventID, userID) VALUES (%s, %s);', [eventID, userID])
+                    cursor.execute('SELECT RSVPID, status, message FROM ShowUp_RSVPs WHERE eventID = %s AND userID = %s;', [eventID, userID])
+                    rows = cursor.fetchone()
+            rsvpID = rows[0]
+            status = rows[1]
+            comment = rows[2]
+        else:       
+            if status:
+                with connection.cursor() as cursor:
+                    cursor.execute('UPDATE ShowUp_RSVPs SET status = %s, message = %s WHERE RSVPID = %s;', [status, comment, rsvpID])
+                return redirect("invites:index")
 
         with connection.cursor() as cursor:
-            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, e.description, e.location, u.firstName, u.lastName, r.status, r.message, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE r.RSVPID = %s;', [rsvpID])
-            rows = cursor.fetchall()
+            cursor.execute('SELECT e.eventName, e.date, e.time, e.theme, e.description, e.location, u.firstName, u.lastName, r.status, r.message, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE r.RSVPID = %s;', [rsvpID])
+            rows = cursor.fetchone()
 
-        invite = [{"eventName": r[0], "date": r[1], "time": r[2], "theme": r[3], "description": r[4], "location": r[5], "firstName": r[6], "lastName": r[7], "status": r[8], "message": r[9], "rsvpID": r[10]} for r in rows]
-        context = {"user_invite" : invite, "rsvpID": rsvpID, "status": status, "comment": comment, "user": userID}
+        invite = {"eventName": rows[0], "date": rows[1], "time": rows[2], "theme": rows[3], "description": rows[4], "location": rows[5], "firstName": rows[6], "lastName": rows[7], "status": rows[8], "message": rows[9], "rsvpID": rows[10]}
+        context = {"user_invite" : [invite], "rsvpID": rsvpID, "status": status, "comment": comment, "user": userID}
         return render(request, "invites/rsvp_form.html", context)
     return render(request, "invites/index.html")
