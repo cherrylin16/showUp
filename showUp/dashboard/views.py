@@ -114,7 +114,6 @@ def upload_event_photo(request, post_id):
             photo.event = post
             photo.save()
 
-            messages.success(request, "Photo uploaded.")
         else:
             print(form.errors)
 
@@ -127,6 +126,5 @@ def delete_event_photo(request, photo_id):
 
     if photo.event.author == request.user:
         photo.delete()
-        messages.success(request, "Photo deleted.")
 
     return redirect("dashboard_home")
