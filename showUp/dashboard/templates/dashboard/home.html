@@ -86,10 +86,13 @@
                                                     Event Details
                                                 </button>
 
-                                                <button type="button"
-                                                        class="btn btn-primary btn-sm rsvp-button">
-                                                    RSVP
-                                                </button>
+                                                <form method="post" action="{% url 'invites:rsvp_form' %}" class="nav-item me-2">
+                                                    {% csrf_token %}
+                                                    <!-- <input type="hidden" name="rsvpID" value=""> -->
+                                                    <button type="submit" class="btn btn-primary btn-sm rsvp-button">
+                                                        RSVP
+                                                    </button>
+                                                </form>
                                             </div>
                                         </div>
                                     </div>
@@ -133,6 +136,14 @@
                                                     <div class="mt-3">
                                                         <h6 class="text-primary border-bottom pb-2">Description</h6>
                                                         <p>{{ post.event_description|linebreaksbr }}</p>
+                                                    </div>
+
+                                                    <div class="col-md-6">
+                                                        <div class="d-flex">
+                                                            <h6 class="text-primary border-bottom pb-2">Invite List</h6>
+                                                            <!-- <button type="button" class="btn btn-primary rsvp-button" data-bs-dismiss="modal">Invite</button> -->
+                                                        </div>
+                                                        
                                                     </div>
 
                                                     <div class="mt-4">

@@ -1,6 +1,50 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
-
+from .models import ShowUpRSVPs
+from django.db import connection
 
 def index(request):
+    invites = None
+    userID = request.user.userID
+    # invites = ShowUpRSVPs.objects.filter(user=userID)
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s;', [userID, userID])
+        rows = cursor.fetchall()
+
+    search = request.GET.get('search', '')
+    filtered = request.GET.get('filter', 'All')
+    with connection.cursor() as cursor:
+        if search:
+            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND e.eventName LIKE %s;', [userID, userID, ('%' + search + '%')])
+            rows = cursor.fetchall()
+        
+        if filtered == 'No_RSVP':
+            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status IS NULL;', [userID, userID])
+            rows = cursor.fetchall()
+        elif filtered != "All":
+            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, u.firstName, u.lastName, r.status, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE u.userID = %s AND e.hostID <> %s AND r.status = %s;', [userID, userID, filtered])
+            rows = cursor.fetchall()
+    
+    invites = [{"eventName": r[0], "date": r[1], "time": r[2], "theme": r[3], "firstName": r[4], "lastName": r[5], "status": r[6], "rsvpID": r[7]} for r in rows]
+    context = {"user_invites" : invites, "search": search}
+    return render(request, "invites/index.html", context)
+
+def rsvp_form(request):
+    userID = request.user.userID
+    if request.method == "POST":
+        rsvpID = request.POST.get('rsvpID')
+        status = request.POST.get('rsvp')
+        comment = request.POST.get('comment')
+        if status:
+            with connection.cursor() as cursor:
+                cursor.execute('UPDATE ShowUp_RSVPs SET status = %s, message = %s WHERE RSVPID = %s;', [status, comment, rsvpID])
+            return redirect("invites:index")
+
+        with connection.cursor() as cursor:
+            cursor.execute('SELECT e.eventName, DATE(e.time), TIME(e.time), e.theme, e.description, e.location, u.firstName, u.lastName, r.status, r.message, r.RSVPID FROM ShowUp_Users u JOIN ShowUp_RSVPs r JOIN ShowUp_Events e ON u.userID = r.userID AND r.eventID = e.eventID WHERE r.RSVPID = %s;', [rsvpID])
+            rows = cursor.fetchall()
+
+        invite = [{"eventName": r[0], "date": r[1], "time": r[2], "theme": r[3], "description": r[4], "location": r[5], "firstName": r[6], "lastName": r[7], "status": r[8], "message": r[9], "rsvpID": r[10]} for r in rows]
+        context = {"user_invite" : invite, "rsvpID": rsvpID, "status": status, "comment": comment, "user": userID}
+        return render(request, "invites/rsvp_form.html", context)
     return render(request, "invites/index.html")
