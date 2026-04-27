@@ -46,8 +46,41 @@
                                         <input type="radio" id="rsvp_no" name="rsvp" value="No" class="btn-check">
                                         <label for="rsvp_no" class="btn btn-outline-danger">No</label>
                                     </div> 
-                                    <!-- <h2>Bring anything?</h2>
-                                    <textarea name="bringing" rows=4 placeholder="Enter items you will bring here"></textarea> -->
+                                    <div class="mb-4">
+                                        <label class="form-label"><strong>Bringing anything?</strong></label>
+                                        <div class="row mb-1">
+                                            <div class="col-md-4"><label class="form-label">Item Name</label></div>
+                                            <div class="col-md-3"><label class="form-label">Quantity</label></div>
+                                        </div>
+    
+                                        <div class="container p-0" id="item-container">
+                                            {% for i in items %}
+                                                <div class="row mb-2">
+                                                    <div class="col-4">
+                                                        <input type="text" name="item_name[]" value="{{ i.itemName }}" class="form-control" placeholder="Item Name">
+                                                    </div>
+                                                    <div class="col-3">
+                                                        <input type="number" name="quantity[]" value="{{ i.quantity }}" class="form-control" placeholder="Qty">
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <button type="button" class="btn btn-danger remove-item">−</button>
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                            <div class="row mb-2">
+                                                <div class="col-4">
+                                                    <input type="text" name="item_name[]" class="form-control" placeholder="Item Name">
+                                                </div>
+                                                <div class="col-3">
+                                                    <input type="number" name="quantity[]" class="form-control" placeholder="Qty">
+                                                </div>
+                                                <div class="col-2">
+                                                    <button type="button" class="btn btn-danger remove-item">−</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" id="add-item" class="btn btn-success mt-2">+ Add Item</button>
+                                    </div>
                                     <div class="mb-4">
                                         <label class="form-label"><strong>Additional Comments</strong></label>
                                         <textarea class="form-control" name="comment" rows="4"
@@ -64,4 +97,34 @@
             {% endfor %}
         </div>
     </body>
+
+    <script>
+        document.getElementById("add-item").addEventListener("click", function () {
+        const container = document.getElementById("item-container");
+
+        const row = document.createElement("div");
+        row.className = "row mb-2";
+
+            row.innerHTML = `
+                <div class="col-4">
+                    <input type="text" name="item_name[]" class="form-control" placeholder="Item Name">
+                </div>
+                <div class="col-3">
+                    <input type="number" name="quantity[]" class="form-control" placeholder="Qty">
+                </div>
+                <div class="col-2">
+                    <button type="button" class="btn btn-danger remove-item">−</button>
+                </div>
+            `;
+
+            container.appendChild(row);
+        });
+
+        // Remove item row
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-item")) {
+                e.target.closest(".row").remove();
+            }
+        });
+    </script>
 </html>
