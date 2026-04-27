@@ -55,14 +55,19 @@ def dashboard_home(request):
 
     for post in posts:
         post_date = getattr(post, "date", None)
-
         post_time = getattr(post, "time", None)
 
         if post_date is None or post_time is None:
             active_posts.append(post)
             continue
 
-        if post_date > current_date or (post_date == current_date and post_time > current_time):
+        if hasattr(post_date, "date"):
+            post_date = post_date.date()
+
+        post_datetime = datetime.combine(post_date, post_time)
+        current_datetime = datetime.now()
+
+        if post_datetime > current_datetime:
             active_posts.append(post)
         else:
             previous_posts.append(post)

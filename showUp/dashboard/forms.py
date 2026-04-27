@@ -17,7 +17,7 @@ class EventPostForm(forms.ModelForm):
         
         widgets = {
             'date': forms.DateInput(attrs={'class':'form-control', 'type': 'date', 'required': True}),
-            'time': forms.TimeInput(attrs={'class':'form-control', 'type': 'date', 'required': True}),
+            'time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
             'event_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name of Event', 'required': True}),
             'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Event Location', 'required': True}),
             'event_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Event Description'}),

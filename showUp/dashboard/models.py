@@ -66,7 +66,8 @@ class EventPhoto(models.Model):
     event = models.ForeignKey(
         EventPost,
         on_delete=models.CASCADE,
-        related_name="photos"
+        related_name="photos",
+        db_column="event_id",
     )
 
     image = models.BinaryField()
