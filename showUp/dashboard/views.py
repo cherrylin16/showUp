@@ -126,6 +126,28 @@ def dashboard_home(request):
                 }
                 for row in order_rows
             ]
+        
+        post.bringing_items = []
+
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT i.itemName, i.quantity, u.firstName, u.lastName
+                FROM ShowUp_Items i
+                JOIN ShowUp_Users u ON i.userID = u.userID
+                WHERE i.eventID = %s
+            """, [post.id])
+
+            rows = cursor.fetchall()
+
+            post.bringing_items = [
+                {
+                    "name": row[0],
+                    "quantity": row[1],
+                    "firstName": row[2],
+                    "lastName": row[3],
+                }
+                for row in rows
+            ]
 
         post.display_photos = []
         try:
