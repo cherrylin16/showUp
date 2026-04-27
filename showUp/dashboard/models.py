@@ -48,7 +48,7 @@ class Caterer(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Caterers'
+        db_table = 'ShowUp_Caterers'
 
 
 class Catering(models.Model):
@@ -59,7 +59,7 @@ class Catering(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'Catering'
+        db_table = 'ShowUp_Catering'
     
 
 class EventPhoto(models.Model):

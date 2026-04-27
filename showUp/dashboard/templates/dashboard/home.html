@@ -211,6 +211,15 @@
                                             <p class="card-text"><i>Description:</i> {{ post.event_description }}</p>
                                             <div class="d-flex justify-content-end align-items-center mt-auto gap-2">
                                                 <span class="btn btn-sm btn-secondary" disabled>Past Event</span>
+
+                                                {% if post.author == request.user %}
+                                                    <button class="btn btn-sm btn-danger"
+                                                            data-bs-toggle="modal"
+                                                            data-bs-target="#deletePostModal"
+                                                            data-post-id="{{ post.id }}">
+                                                        Delete
+                                                    </button>
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
