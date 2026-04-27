@@ -7,10 +7,11 @@ from datetime import datetime, date, time
 
 # import forms
 from .forms import EventPostForm
-from .models import EventPost
+from .models import EventPost, Budget, EventPhoto, Orders, Catering, Caterer
 
 # querying
 from django.db.models import Q
+import base64
 
 
 # Create your views here.
@@ -25,9 +26,9 @@ def dashboard_home(request):
 
     if query:
         posts = posts.filter(
-            Q(host_name__icontains=query) |
+            Q(author__firstName__icontains=query) |
+            Q(author__lastName__icontains=query) |
             Q(event_name__icontains=query) |
-            Q(location__icontains=query) |
             Q(event_description__icontains=query)
         ).distinct()
 
@@ -35,14 +36,13 @@ def dashboard_home(request):
 
     if view_filter == 'hosting':
         posts = posts.filter(author=request.user)
-    elif view_filter == 'attending':
-        posts = posts.filter(attendees=request.user)
+ 
 
     if date_filter:
         posts = posts.filter(date=date_filter)
 
     if time_filter:
-        posts = posts.filter(pickup_time__icontains=time_filter)
+        posts = posts.filter(time=time_filter)
     
 
     # Separate active and previous posts
@@ -72,15 +72,19 @@ def dashboard_home(request):
         else:
             previous_posts.append(post)
 
+
+
     for post in active_posts + previous_posts:
         post.display_photos = []
-
-        for photo in post.photos.all():
-            encoded = base64.b64encode(photo.image).decode("utf-8")
-            post.display_photos.append({
-                "id": photo.id,
-                "image": encoded,
-            })
+        try:
+            for photo in post.photos.all():
+                encoded = base64.b64encode(bytes(photo.image)).decode("utf-8")  # bytes() fixes memoryview
+                post.display_photos.append({
+                    "id": photo.id,
+                    "image": encoded,
+                })
+        except Exception as e:
+            print(f"Photo error for post {post.id}: {e}")
             
     return render(request, "dashboard/home.html", {
         'active_posts': active_posts,
@@ -95,22 +99,70 @@ def dashboard_home(request):
 @login_required
 def create_event_post(request):
     if request.method == 'POST':
-        #Handle deletion
         if request.POST.get('delete_post_id'):
             post_id = request.POST.get('delete_post_id')
             EventPost.objects.filter(id=post_id, author=request.user).delete()
             return redirect('dashboard_home')
 
-        # Handle creation
         form = EventPostForm(request.POST, request.FILES)
         if form.is_valid():
+            # 1. Save the Event
             post = form.save(commit=False)
             post.author = request.user
             post.save()
+
+            catering_budget = form.cleaned_data.get("catering_budget") or 0
+            supplies_budget = form.cleaned_data.get("supplies_budget") or 0
+            total_budget = catering_budget + supplies_budget
+
+            Budget.objects.create(
+                event=post,
+                catering=catering_budget,
+                party_supplies=supplies_budget,
+                total_budget=total_budget      
+            )
+
+            caterer_name = form.cleaned_data.get("caterer_name")
+            caterer_phone = form.cleaned_data.get("caterer_phone")
+            caterer_location = form.cleaned_data.get("caterer_address")
+
+            caterer = None
+            if caterer_name and caterer_name.strip(): 
+                caterer, created = Caterer.objects.get_or_create(
+                    name=caterer_name.strip(),
+                    defaults={
+                        "phone": caterer_phone or "",
+                        "caterer_location": caterer_location or ""
+                    }
+                )
+                if not created:
+                    caterer.phone = caterer_phone or caterer.phone
+                    caterer.save()
+
+            if caterer:
+                catering_record = Catering.objects.create(
+                    event=post,
+                    caterer=caterer, 
+                    special_instructions=""
+                )
+
+                # 5. Handle Orders (Dish list)
+                dish_names = request.POST.getlist("dish_name[]")
+                quantities = request.POST.getlist("quantity[]")
+                prices = request.POST.getlist("price[]")
+
+                for name, qty, price in zip(dish_names, quantities, prices):
+                    if name.strip():
+                        Orders.objects.create(
+                        cateringID=catering_record,
+                        dishName=name.strip(),
+                        quantity=int(qty) if qty else 0,
+                        price=float(price) if price else 0.0
+                        )
+
             return redirect('dashboard_home')
         
     return redirect('dashboard_home')
-
 
 
 
