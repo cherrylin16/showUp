@@ -1,2 +1,5 @@
 # showUp
-https://showup-116034500413.us-east4.run.app
+
+Show Up is a private event-planning web application designed to simplify the process of organizing and managing social events. The platform allows hosts to create and customize events by adding essential details such as guest lists, party supplies, catering information, budgets, event time, location, and optional themes. Hosts can also send invitations directly to other registered users within the platform, creating a centralized space for event coordination.
+
+Invited users can view event details, submit RSVPs, and indicate any items they plan to bring, helping hosts stay informed and organized. Hosts are able to track guest responses, monitor contributions, and manage event logistics all in one place. By combining planning, communication, and guest coordination into a single system, Show Up provides a streamlined and user-friendly solution for private event management.
