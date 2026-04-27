@@ -29,8 +29,7 @@ def dashboard_home(request):
     # search queries and filters
     query = request.GET.get('q', '')
     date_filter = request.GET.get('date', '')
-    start_time_filter = request.GET.get('start_time', '')
-    end_time_filter = request.GET.get('end_time', '')
+    time_filter = request.GET.get('time', '')
 
     if query:
         posts = posts.filter(
@@ -40,11 +39,10 @@ def dashboard_home(request):
             Q(caterer_address__icontains=query) |
             Q(caterer_phone__icontains=query) |
             Q(caterer_name__icontains=query) |
-            Q(catering_budget__icontains=query) |
-            Q(supplies_budget__icontains=query) |
+            Q(catering__icontains=query) |
+            Q(party_supplies__icontains=query) |
             Q(date__icontains=query) |
-            Q(start_time__icontains=query) |
-            Q(end_time__icontains=query) |
+            Q(time__icontains=query) |
             Q(event_description__icontains=query) 
         ).distinct()
     
@@ -62,6 +60,10 @@ def dashboard_home(request):
     if date_filter:
             posts = posts.filter(date=date_filter)
 
+    if time_filter:
+        posts = posts.filter(pickup_time__icontains=time_filter)
+    
+
     # Separate active and previous posts
     now = datetime.now()
     current_date = now.date()
@@ -74,7 +76,7 @@ def dashboard_home(request):
         try:
             # Parse date and time from post
             post_date = datetime.strptime(post.date, '%Y-%m-%d').date()
-            post_time = post.start_time
+            post_time = post.time
             
             # Check if post is in the future
             if post_date > current_date or (post_date == current_date and post_time > current_time):
