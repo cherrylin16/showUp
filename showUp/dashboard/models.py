@@ -91,7 +91,7 @@ class EventPhoto(models.Model):
         EventPost,
         on_delete=models.CASCADE,
         related_name="photos",
-        db_column="event_id",
+        db_column="eventID",
     )
 
     image = models.BinaryField()
