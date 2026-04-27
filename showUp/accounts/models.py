@@ -28,10 +28,10 @@ class ShowUpUser(AbstractBaseUser, PermissionsMixin):
     lastName = models.CharField(max_length=100, db_column="lastName")
     email = models.EmailField(unique=True, db_column="email")
 
-    phone = models.CharField(max_length=255)  # match DB
-    birthdate = models.DateField()            # NOT NULL in DB
+    phone = models.CharField(max_length=255)  
+    birthdate = models.DateField()            
 
-    pfp = models.BinaryField(null=True, blank=True)  # 👈 ADD THIS
+    pfp = models.BinaryField(null=True, blank=True) 
 
     accountCreated = models.DateTimeField(auto_now_add=True, db_column="accountCreated")
 

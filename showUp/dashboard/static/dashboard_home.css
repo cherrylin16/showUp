@@ -91,3 +91,54 @@ body {
     background: #c70000;
     color: white;
 }
+
+
+.dark-mode {
+    background-color: #121212 !important;
+    color: #f1f1f1 !important;
+    min-height: 100vh;
+}
+
+.dark-mode .container,
+.dark-mode .wrapper,
+.dark-mode .main {
+    background-color: #121212 !important;
+    color: #f1f1f1 !important;
+}
+
+.dark-mode .card {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+}
+
+.dark-mode .modal-content {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+}
+
+.dark-mode .list-group-item {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+    border-color: #444 !important;
+}
+
+.dark-mode .form-control,
+.dark-mode .form-select {
+    background-color: #2a2a2a !important;
+    color: #f1f1f1 !important;
+    border-color: #555 !important;
+}
+
+.dark-mode .text-muted {
+    color: #bbb !important;
+}
+
+.dark-mode .bg-light {
+    background-color: #1e1e1e !important;
+}
+
+.dark-mode .navbar,
+.dark-mode nav {
+    background-color: #1e1e1e !important;
+    color: #f1f1f1 !important;
+}

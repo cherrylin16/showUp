@@ -9,7 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body>
+<body class="{% if request.user.is_authenticated and request.user.preference.lightMode == 'Dark' %}dark-mode{% endif %}">
 
 {% include "static/navigationbar.html" %}
 
@@ -80,17 +80,22 @@
                     <div class="text-danger small">{{ error }}</div>
                 {% endfor %}
             </div>
-
-            <div class="mb-3 form-check">
-                {{ preference_form.notifications }}
-                <label class="form-check-label">Enable Notifications</label>
-
-                {% for error in preference_form.notifications.errors %}
+            <div class="mb-3">
+                <label class="form-label">Theme</label>
+                {{ preference_form.lightMode }}
+                {% for error in preference_form.lightMode.errors %}
                     <div class="text-danger small">{{ error }}</div>
                 {% endfor %}
             </div>
 
-
+            <div class="mb-3 form-check">
+                {{ preference_form.notifications }}
+                <label class="form-check-label">Enable Notifications</label>
+                {% for error in preference_form.notifications.errors %}
+                    <div class="text-danger small">{{ error }}</div>
+                {% endfor %}
+            </div>
+            
             <button type="submit" class="btn btn-primary w-100 mt-2">
                 Save Changes
             </button>

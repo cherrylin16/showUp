@@ -1,36 +1,36 @@
 from django import forms
-from .models import EventPost
+from .models import EventPost, EventPhoto
 from datetime import date, datetime
 
 class EventPostForm(forms.ModelForm):
-    catering_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00)
-    supplies_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00)
+    caterer_name = forms.CharField(max_length=255, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}))
+    caterer_phone = forms.CharField(max_length=20, required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123-456-7890', 'pattern': '[0-9]{3}-[0-9]{3}-[0-9]{4}'}))
+    caterer_address = forms.CharField(required=False, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Street, City, State, Zip'}))
+    quantity = forms.IntegerField(required=False,  widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Company Name'}))
+
+    price = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}))
+    catering_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}))
+    supplies_budget = forms.DecimalField(max_digits=10, decimal_places=2, min_value=0.00, required=False, widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '0.00'}))
 
     class Meta:
         model = EventPost
-        # 'location_snum', 'location_street', 'location_city' 'location_state', 'location_zip,
-        fields = ['host_name','event_name', 'date', 'start_time', 'end_time', 'location', 'caterer_address', 'caterer_phone', 'caterer_name', 'catering_budget', 'supplies_budget', 'event_description']
-        widgets = {
-            'host_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Host Name', 'required': True}),
-            'event_name': forms.TextInput(attrs={'class': 'form-control', 'rows':1, 'placeholder': 'Name of Event', 'required': True}),
-            'date': forms.DateInput(attrs={'class':'form-control', 'type': 'date', 'required': True}),
-            'start_time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
-            'end_time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Street, City, State, Zip Code', 'required': True}),
-            'caterer_address': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Street, City, State, Zip Code', 'required': True}),
-            'caterer_phone': forms.TextInput(attrs={
-                    'class': 'form-control', 
-                    'placeholder': '123-456-7890',
-                    'pattern': '[0-9]{3}-[0-9]{3}-[0-9]{4}'
-            }),
-            'caterer_name': forms.TextInput(attrs={'class': 'form-control', 'rows': 1, 'placeholder': 'Company Name'}),
-            'event_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Create a description for your event'}),
-        }
+        # Only include fields that actually exist in your 'Events' SQL table here
+        fields = ['event_name', 'date', 'time', 'event_description', 'location', 'theme', 'playlist'] 
         
+        widgets = {
+            'date': forms.DateInput(attrs={'class':'form-control', 'type': 'date', 'required': True}),
+            'time': forms.TimeInput(attrs={'class':'form-control', 'type': 'time', 'required': True}),
+            'theme': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Dress Code, Party Theme'}),
+            'playlist': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Add Playlist Link Here'}),
+            'event_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Name of Event', 'required': True}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Event Location', 'required': True}),
+            'event_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 4, 'placeholder': 'Event Description'}),
+        }
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['date'].widget.attrs['min'] = date.today().isoformat()
+    
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     self.fields['date'].widget.attrs['min'] = date.today().isoformat()
     
     # def clean_date(self):
     #     selected_date = self.cleaned_data['date']
@@ -39,3 +39,21 @@ class EventPostForm(forms.ModelForm):
     #     if selected_date < date.today():
     #         raise forms.ValidationError("Trip date cannot be in the past.")
     #     return selected_date
+    
+
+class EventPhotoForm(forms.ModelForm):
+    image_file = forms.ImageField(required=True)
+
+    class Meta:
+        model = EventPhoto
+        fields = []
+
+    def save(self, commit=True):
+        photo = super().save(commit=False)
+        uploaded_file = self.cleaned_data["image_file"]
+        photo.image = uploaded_file.read()
+
+        if commit:
+            photo.save()
+
+        return photo

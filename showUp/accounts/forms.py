@@ -95,8 +95,15 @@ class ProfileUpdateForm(forms.ModelForm):
 class PreferenceUpdateForm(forms.ModelForm):
     class Meta:
         model = Preference
-        fields = ("notifications",)
+        fields = ("notifications", "lightMode")
 
         widgets = {
             "notifications": forms.CheckboxInput(attrs={"class": "form-check-input"}),
+            "lightMode": forms.Select(
+                attrs={"class": "form-select"},
+                choices=[
+                    ("Light", "Light Mode"),
+                    ("Dark", "Dark Mode"),
+                ],
+            ),
         }
